@@ -1,6 +1,7 @@
-import { Activity, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SpikeNotificationBell } from "./SpikeNotificationBell";
+import logo from "@/assets/logo.png";
 
 interface DashboardHeaderProps {
   station: string;
@@ -14,12 +15,15 @@ export const DashboardHeader = ({ station, updatedAt, showSpikeBell = false }: D
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="container flex h-16 items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-card">
-            <Activity className="h-5 w-5" aria-hidden />
-          </div>
+          <img
+            src={logo}
+            alt="Vayu-Nirantar logo"
+            className="h-10 w-10 shrink-0 rounded-lg bg-background object-contain ring-1 ring-border"
+          />
           <div className="min-w-0">
             <h1 className="text-base font-semibold leading-tight truncate sm:text-lg">
-              AirWatch <span className="text-muted-foreground font-normal">Monitoring</span>
+              Vayu-Nirantar{" "}
+              <span className="text-muted-foreground font-normal">Monitoring</span>
             </h1>
             <p className="text-xs text-muted-foreground truncate">
               {station} · Updated {updatedAt}
