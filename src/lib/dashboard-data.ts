@@ -108,10 +108,9 @@ export const hourlyTrend = Array.from({ length: 24 }, (_, i) => {
 });
 
 export const sourceContribution = [
-  { name: "Industrial", value: 48 },
-  { name: "Agricultural", value: 27 },
-  { name: "Vehicular", value: 18 },
-  { name: "Other", value: 7 },
+  { name: "Industrial Emission", value: 45 },
+  { name: "Agricultural / Biomass Burning", value: 32 },
+  { name: "Mixed Urban Pollution", value: 23 },
 ];
 
 export interface OfficerCase {
