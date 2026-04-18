@@ -1,12 +1,15 @@
-import { Activity, Bell, Menu } from "lucide-react";
+import { Activity, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SpikeNotificationBell } from "./SpikeNotificationBell";
 
 interface DashboardHeaderProps {
   station: string;
   updatedAt: string;
+  /** Show the realtime spike notification bell (Sarpanch / Officer / Admin views). */
+  showSpikeBell?: boolean;
 }
 
-export const DashboardHeader = ({ station, updatedAt }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ station, updatedAt, showSpikeBell = false }: DashboardHeaderProps) => {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="container flex h-16 items-center justify-between gap-3">
@@ -32,9 +35,7 @@ export const DashboardHeader = ({ station, updatedAt }: DashboardHeaderProps) =>
             </span>
             <span className="text-muted-foreground">Live</span>
           </div>
-          <Button variant="ghost" size="icon" aria-label="Notifications">
-            <Bell className="h-5 w-5" />
-          </Button>
+          {showSpikeBell && <SpikeNotificationBell />}
           <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menu">
             <Menu className="h-5 w-5" />
           </Button>
