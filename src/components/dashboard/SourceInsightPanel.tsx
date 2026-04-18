@@ -78,18 +78,6 @@ export const SourceInsightPanel = () => {
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-muted-foreground">Confidence</span>
-              <span className="font-medium tabular-nums">{insight.confidence}%</span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${insight.confidence}%` }}
-              />
-            </div>
-          </div>
         </div>
       </div>
 
