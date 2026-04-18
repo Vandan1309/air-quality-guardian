@@ -15,7 +15,7 @@ export type Pollutant = (typeof POLLUTANTS)[number];
 
 export const THRESHOLDS: Record<Pollutant, number> = {
   "PM2.5": 60,
-  PM10: 100,
+  PM10: 150,
   NO: 80,
   NO2: 80,
   NOx: 200,
@@ -58,6 +58,7 @@ export interface Incident {
   durationHours: number;
   pollutants: Pollutant[];
   wind: string;
+  windSpeed: number; // km/h
   zone: string;
   category: string;
   severity: "LOW" | "MEDIUM" | "HIGH";
@@ -94,13 +95,20 @@ function toNum(v: unknown): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
-// -------- classification (mirrors app.py classify_source) --------
+// -------- classification (mirrors latest app.py classify_source — 3 categories) --------
 export function classifySource(exceeded: Pollutant[]): string {
   const has = (p: Pollutant) => exceeded.includes(p);
-  if (has("SO2") || has("NOx")) return "Industrial Emission";
-  if (has("NO2") && has("CO")) return "Traffic Congestion";
-  if (has("PM10") && !has("PM2.5")) return "Construction / Road Dust";
-  if (has("PM2.5") && has("PM10")) return "Agricultural / Biomass Burning";
+  let agri = 0;
+  let ind = 0;
+  if (has("PM2.5")) agri += 2;
+  if (has("PM10")) agri += 2;
+  if (has("CO")) agri += 1;
+  if (has("NO2")) ind += 2;
+  if (has("SO2")) ind += 2;
+  if (has("NOx")) ind += 2;
+  if (has("CO")) ind += 1;
+  if (agri > ind) return "Agricultural / Biomass Burning";
+  if (ind > agri) return "Industrial Emission";
   return "Mixed Urban Pollution";
 }
 
@@ -114,6 +122,11 @@ export function getSeverity(exceeded: Pollutant[]): "LOW" | "MEDIUM" | "HIGH" {
 // Stable per-incident wind based on incident timestamp (deterministic — not random)
 function stableWind(seed: number): string {
   return WIND_KEYS[Math.abs(seed) % WIND_KEYS.length];
+}
+
+const WIND_SPEEDS = [6, 8, 10, 12, 14, 16, 18, 20, 22];
+function stableWindSpeed(seed: number): number {
+  return WIND_SPEEDS[Math.abs(seed) % WIND_SPEEDS.length];
 }
 
 // -------- main loader --------
@@ -209,7 +222,9 @@ function finalize(
   e: { from: Date; to: Date; pollutants: Pollutant[]; peakValue: number; peakPollutant: Pollutant },
   idx: number,
 ): Incident {
-  const wind = stableWind(e.from.getTime() + idx);
+  const seed = e.from.getTime() + idx;
+  const wind = stableWind(seed);
+  const windSpeed = stableWindSpeed(seed >> 3);
   return {
     id: `INC-${String(idx + 1).padStart(5, "0")}`,
     from: e.from,
@@ -217,6 +232,7 @@ function finalize(
     durationHours: Math.round(((e.to.getTime() - e.from.getTime()) / 36e5) * 100) / 100,
     pollutants: e.pollutants,
     wind,
+    windSpeed,
     zone: WIND_MAP[wind],
     category: classifySource(e.pollutants),
     severity: getSeverity(e.pollutants),
@@ -310,9 +326,11 @@ export async function getSourceBreakdown() {
   };
 }
 
-export async function getCurrentWind(): Promise<{ degrees: number; cardinal: string }> {
+export async function getCurrentWind(): Promise<{ degrees: number; cardinal: string; speed: number }> {
   const recent = await getRecentIncidents(24);
-  const cardinal = recent[0]?.wind ?? "NW";
+  const top = recent[0];
+  const cardinal = top?.wind ?? "NW";
+  const speed = top?.windSpeed ?? 12;
   const map: Record<string, number> = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
-  return { degrees: map[cardinal] ?? 315, cardinal };
+  return { degrees: map[cardinal] ?? 315, cardinal, speed };
 }

@@ -38,6 +38,7 @@ export interface Spike {
 export interface WindReading {
   degrees: number;
   cardinal: string;
+  speed: number;
 }
 
 export interface SourceInsight {
