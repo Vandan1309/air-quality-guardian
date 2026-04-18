@@ -6,6 +6,7 @@ import { PollutantCard } from "@/components/dashboard/PollutantCard";
 import { SourceInsightPanel } from "@/components/dashboard/SourceInsightPanel";
 import { WindDirection } from "@/components/dashboard/WindDirection";
 import { PollutantTrendChart } from "@/components/dashboard/PollutantTrendChart";
+import { AqiGraph } from "@/components/dashboard/AqiGraph";
 import { fetchPollutants, fetchWind, fetchIncidents, fetchDatasetLatest, type WindReading } from "@/lib/api";
 import type { PollutantReading } from "@/lib/dashboard-data";
 import type { Incident } from "@/lib/dataset";
@@ -84,6 +85,9 @@ const Index = () => {
             ))}
           </div>
         </section>
+
+        {/* Centerpiece: realtime AQI graph */}
+        <AqiGraph />
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2">
