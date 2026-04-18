@@ -13,7 +13,7 @@ import type { Incident } from "@/lib/dataset";
 
 const Index = () => {
   const [pollutants, setPollutants] = useState<PollutantReading[]>([]);
-  const [wind, setWind] = useState<WindReading>({ degrees: 315, cardinal: "NW" });
+  const [wind, setWind] = useState<WindReading>({ degrees: 315, cardinal: "NW", speed: 12 });
   const [topIncident, setTopIncident] = useState<Incident | null>(null);
   const [updatedAt, setUpdatedAt] = useState("loading…");
 
@@ -59,7 +59,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader station="Maninagar, Ahmedabad — GPCB" updatedAt={updatedAt} />
+      <DashboardHeader station="Maninagar, Ahmedabad — GPCB" updatedAt={updatedAt} showSpikeBell />
 
       <main className="container py-4 sm:py-6 lg:py-8 space-y-4 sm:space-y-6">
         <h1 className="sr-only">Environmental Monitoring Dashboard</h1>
@@ -94,7 +94,7 @@ const Index = () => {
             <PollutantTrendChart />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
-            <WindDirection degrees={wind.degrees} cardinal={wind.cardinal} />
+            <WindDirection degrees={wind.degrees} cardinal={wind.cardinal} speed={wind.speed} />
           </div>
         </section>
 
@@ -103,7 +103,7 @@ const Index = () => {
         </section>
 
         <footer className="pt-2 pb-6 text-center text-xs text-muted-foreground">
-          AirWatch · Maninagar CAAQMS · Powered by CPCB dataset
+          Vayu-Nirantar · Maninagar CAAQMS · Powered by CPCB dataset
         </footer>
       </main>
     </div>
